@@ -84,7 +84,7 @@ namespace FunctionalityMatrixApp.Areas.Identity.Pages.Account
 
                     // Block autologin after registration
                     //await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect("./ConfirmEmailInfo");
+                    return Redirect("./ConfirmEmailInfo");
                 }
                 foreach (var error in result.Errors)
                 {
