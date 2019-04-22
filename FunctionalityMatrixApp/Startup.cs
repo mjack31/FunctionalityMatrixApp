@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using FunctionalityMatrix.Services;
+using FunctionalityMatrixApp.Areas.Identity;
+using Microsoft.Extensions.Options;
 
 namespace FunctionalityMatrixApp
 {
@@ -42,18 +44,30 @@ namespace FunctionalityMatrixApp
             {
                 config.SignIn.RequireConfirmedEmail = true;
             })
+                .AddRoles<IdentityRole>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddAuthorization(config =>
+            {
+                config.AddPolicy("RequireAdministratorRole",
+                    policy => policy.RequireRole("Administrator"));
+                config.AddPolicy("RequireMemberRole",
+                    policy => policy.RequireRole("Member"));
+            });
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
 
             services.AddRazorPages()
-                .AddNewtonsoftJson();
+                .AddNewtonsoftJson()
+                .AddRazorPagesOptions(options => {
+                    options.Conventions.AuthorizePage("/Privacy", "RequireAdministratorRole");
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider, UserManager<IdentityUser> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -81,6 +95,46 @@ namespace FunctionalityMatrixApp
             {
                 endpoints.MapRazorPages();
             });
+
+            CreateDatabase(app);
+            CreateRolesAsync(serviceProvider).Wait();
+            CreateSuperUser(userManager).Wait();
+        }
+
+        private async Task CreateSuperUser(UserManager<IdentityUser> userManager)
+        {
+            var superUser = new IdentityUser { UserName = Configuration["SuperUserLogin"], Email = Configuration["SuperUserLogin"] };
+            await userManager.CreateAsync(superUser, Configuration["SuperUserPassword"]);
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(superUser);
+            await userManager.ConfirmEmailAsync(superUser, token);
+            await userManager.AddToRoleAsync(superUser, "Admin");
+        }
+
+        private void CreateDatabase(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                context.Database.EnsureCreated();
+            }
+        }
+
+        private async Task CreateRolesAsync(IServiceProvider serviceProvider)
+        {
+            //adding custom roles
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            string[] roleNames = { "Admin", "Member", "Outcast" };
+            IdentityResult roleResult;
+            
+            foreach (var roleName in roleNames)
+            {
+                //creating the roles and seeding them to the database
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
         }
     }
 }
