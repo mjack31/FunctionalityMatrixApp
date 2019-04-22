@@ -67,7 +67,7 @@ namespace FunctionalityMatrixApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider, UserManager<IdentityUser> userManager)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -97,17 +97,8 @@ namespace FunctionalityMatrixApp
             });
 
             CreateDatabase(app);
-            CreateRolesAsync(serviceProvider).Wait();
+            CreateRolesAsync(roleManager).Wait();
             CreateSuperUser(userManager).Wait();
-        }
-
-        private async Task CreateSuperUser(UserManager<IdentityUser> userManager)
-        {
-            var superUser = new IdentityUser { UserName = Configuration["SuperUserLogin"], Email = Configuration["SuperUserLogin"] };
-            await userManager.CreateAsync(superUser, Configuration["SuperUserPassword"]);
-            var token = await userManager.GenerateEmailConfirmationTokenAsync(superUser);
-            await userManager.ConfirmEmailAsync(superUser, token);
-            await userManager.AddToRoleAsync(superUser, "Admin");
         }
 
         private void CreateDatabase(IApplicationBuilder app)
@@ -119,22 +110,34 @@ namespace FunctionalityMatrixApp
             }
         }
 
-        private async Task CreateRolesAsync(IServiceProvider serviceProvider)
+        private async Task CreateRolesAsync(RoleManager<IdentityRole> roleManager)
         {
             //adding custom roles
-            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             string[] roleNames = { "Admin", "Member", "Outcast" };
             IdentityResult roleResult;
-            
+
             foreach (var roleName in roleNames)
             {
                 //creating the roles and seeding them to the database
-                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
                 if (!roleExist)
                 {
-                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                    roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
             }
         }
+
+        private async Task CreateSuperUser(UserManager<IdentityUser> userManager)
+        {
+            var superUser = new IdentityUser { UserName = Configuration["SuperUserLogin"], Email = Configuration["SuperUserLogin"] };
+            await userManager.CreateAsync(superUser, Configuration["SuperUserPassword"]);
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(superUser);
+            await userManager.ConfirmEmailAsync(superUser, token);
+            await userManager.AddToRoleAsync(superUser, "Admin");
+        }
+
+
+
+
     }
 }
