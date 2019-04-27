@@ -6,10 +6,12 @@ namespace FunctionalityMatrixApp.DataAccess
 {
     public class ProductsDbContext : DbContext
     {
-        public ProductsDbContext()
+        public ProductsDbContext(DbContextOptions<ProductsDbContext> options) : base(options)
         {
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<Picture> Pictures { get; set; }
+        public DbSet<Attachment> Attachments { get; set; }
     }
 }

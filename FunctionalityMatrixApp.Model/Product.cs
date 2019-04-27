@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunctionalityMatrixApp.Model
@@ -8,9 +7,8 @@ namespace FunctionalityMatrixApp.Model
     {
         public Product()
         {
-            Childs = new List<Product>();
-            Pictures = new List<string>();
-            Attachments = new List<string>();
+            Pictures = new List<Picture>();
+            Attachments = new List<Attachment>();
         }
 
         public int Id { get; set; }
@@ -19,15 +17,13 @@ namespace FunctionalityMatrixApp.Model
 
         public Product Parent { get; set; }
 
-        public List<Product> Childs { get; set; }
-
         [Required]
         public string Name { get; set; }
 
         [Required]
         public string Producer { get; set; }
 
-        public List<string> Pictures { get; set; }
+        public List<Picture> Pictures { get; set; }
 
         public bool IsAllcomp { get; set; }
 
@@ -44,6 +40,8 @@ namespace FunctionalityMatrixApp.Model
         [Required]
         public string Content { get; set; }
 
-        public List<string> Attachments { get; set; }
+        public List<Attachment> Attachments { get; set; }
+
+        public ProductType ProductType { get; set; }
     }
 }

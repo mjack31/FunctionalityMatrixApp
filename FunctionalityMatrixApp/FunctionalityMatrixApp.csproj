@@ -19,4 +19,9 @@
     <PackageReference Include="Sendgrid" Version="9.11.0" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <ProjectReference Include="..\FunctionalityMatrixApp.DataAccess\FunctionalityMatrixApp.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>
