@@ -1,6 +1,7 @@
 using FunctionalityMatrix.Services;
 using FunctionalityMatrixApp.Data;
 using FunctionalityMatrixApp.DataAccess;
+using FunctionalityMatrixApp.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -38,6 +39,8 @@ namespace FunctionalityMatrixApp
             services.AddDbContextPool<ProductsDbContext>(options =>
                 options.UseSqlServer(
                      Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<IProductsData, DBProductsDataService>();
 
             services.AddDefaultIdentity<IdentityUser>(config =>
             {

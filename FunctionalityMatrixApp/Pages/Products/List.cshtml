@@ -7,3 +7,11 @@
 
 <h1>List</h1>
 
+<div>
+    @foreach (var product in Model.Products)
+    {
+        <partial name="_ListItem" model="product" />
+    }
+</div>
+
+<a class="btn btn-outline-success" asp-page="./Edit">Add new product</a>
