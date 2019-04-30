@@ -7,7 +7,7 @@
 
 <h1>Edit</h1>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="Product.Id" />
     <div class="form-group">
         <label asp-for="Product.Name"></label>
@@ -20,10 +20,86 @@
         <span class="text-danger" asp-validation-for="Product.Producer"></span>
     </div>
     <div class="form-group">
+        <label asp-for="Product.ProductType"></label>
+        <select class="form-control" asp-for="Product.ProductType" asp-items="@Model.ProductTypes"></select>
+        <span class="text-danger" asp-validation-for="Product.ProductType"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Product.Parent"></label>
+        <select class="form-control" asp-for="Product.Parent" asp-items="@Model.AvailableParents"></select>
+        <span class="text-danger" asp-validation-for="Product.Parent"></span>
+    </div>
+    <div class="form-group">
+        <div>
+            The industry in which it occurs:
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" asp-for="Product.InFurniture">
+            <label class="form-check-label" asp-for="Product.InFurniture">Furnitures</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" asp-for="Product.InAutomotive">
+            <label class="form-check-label" asp-for="Product.InAutomotive">Automotive</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" asp-for="Product.InFashion">
+            <label class="form-check-label" asp-for="Product.InFashion">Fashion</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <div>
+            Product status:
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" asp-for="Product.IsInDevelopment">
+            <label class="form-check-label" asp-for="Product.IsInDevelopment">In development</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" asp-for="Product.IsInOffer">
+            <label class="form-check-label" asp-for="Product.IsInOffer">In offer</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <div>
+            Pictures of the product
+        </div>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" asp-for="Upload" multiple>
+            <label class="custom-file-label" asp-for="Upload">Choose file</label>
+            <span class="text-danger" asp-validation-for="Upload"></span>
+        </div>
+    </div>
+    <div class="form-group">
         <label asp-for="Product.Content"></label>
         <textarea class="form-control" asp-for="Product.Content" rows="5"></textarea>
         <span class="text-danger" asp-validation-for="Product.Content"></span>
     </div>
+    <div class="form-group">
+        <div>
+            Additional attachments:
+        </div>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile" multiple>
+            <label class="custom-file-label" for="customFile">Choose file</label>
+            <span class="text-danger" asp-validation-for="Product.Parent"></span>
+        </div>
+    </div>
     <button class="btn btn-outline-info">Save changes</button>
 </form>
+
+
+@section Scripts {
+    <environment include="Development">
+        <script src="~/node_modules/bs-custom-file-input/dist/bs-custom-file-input.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+    </environment>
+
+    <script>
+        $(document).ready(function () {
+            bsCustomFileInput.init()
+        })
+    </script>
+}
 

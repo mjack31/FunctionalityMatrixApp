@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace FunctionalityMatrixApp
@@ -65,7 +67,7 @@ namespace FunctionalityMatrixApp
                 .AddNewtonsoftJson()
                 .AddRazorPagesOptions(options =>
                 {
-                    
+
                 });
         }
 
@@ -86,6 +88,12 @@ namespace FunctionalityMatrixApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "node_modules")),
+                RequestPath = "/node_modules"
+            });
 
             app.UseCookiePolicy();
 

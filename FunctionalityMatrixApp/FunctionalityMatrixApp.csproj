@@ -4,7 +4,22 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UserSecretsId>aspnet-FunctionalityMatrixApp-8A56759B-8FE3-4960-B94E-768EB8223FF4</UserSecretsId>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <TypeScriptToolsVersion>3.3</TypeScriptToolsVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="node_modules\bs-custom-file-input\package.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="node_modules\bs-custom-file-input\CHANGELOG.md" />
+    <None Include="node_modules\bs-custom-file-input\dist\bs-custom-file-input.js" />
+    <None Include="node_modules\bs-custom-file-input\dist\bs-custom-file-input.js.map" />
+    <None Include="node_modules\bs-custom-file-input\dist\bs-custom-file-input.min.js" />
+    <None Include="node_modules\bs-custom-file-input\dist\bs-custom-file-input.min.js.map" />
+    <None Include="node_modules\bs-custom-file-input\LICENSE" />
+    <None Include="node_modules\bs-custom-file-input\README.md" />
+  </ItemGroup>
 
 
   <ItemGroup>
@@ -22,6 +37,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FunctionalityMatrixApp.DataAccess\FunctionalityMatrixApp.DataAccess.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <TypeScriptCompile Include="node_modules\bs-custom-file-input\bs-custom-file-input.d.ts" />
   </ItemGroup>
 
 </Project>
