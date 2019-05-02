@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using FunctionalityMatrixApp.DataAccess.Interfaces;
+﻿using FunctionalityMatrixApp.DataAccess.Interfaces;
 using FunctionalityMatrixApp.Model;
 using FunctionalityMatrixApp.Wrappers;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FunctionalityMatrixApp.Pages.Products
 {
@@ -41,7 +36,7 @@ namespace FunctionalityMatrixApp.Pages.Products
         {
             var picture = product.Pictures.FirstOrDefault();
             var path = configuration.GetValue<string>("UploadPaths:Pictures");
-            if(picture != null)
+            if (picture != null)
             {
                 return path + picture.Name;
             }

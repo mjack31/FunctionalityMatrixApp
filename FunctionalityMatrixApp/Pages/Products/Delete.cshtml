@@ -1,9 +1,16 @@
-﻿@page
+﻿@page "{productId:int}"
 @model FunctionalityMatrixApp.Pages.Products.DeleteModel
 @{
     ViewData["Title"] = "Delete";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h1>Delete</h1>
+<h2>Delete</h2>
+<div>
+    Do you really want to delete?
+    <form method="post">
+        <button class="btn btn-danger">Yes</button>
+    </form>
+    <a class="btn btn-default" asp-page="./List">No</a>
+</div>
 

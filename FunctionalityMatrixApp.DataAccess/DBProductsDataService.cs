@@ -34,7 +34,7 @@ namespace FunctionalityMatrixApp.DataAccess
 
         public Product GetById(int id)
         {
-            throw new NotImplementedException();
+            return productsDbContext.Products.Include("Pictures").Include("Attachments").FirstOrDefault(p => p.Id == id);
         }
 
         public Product Remove(int id)
