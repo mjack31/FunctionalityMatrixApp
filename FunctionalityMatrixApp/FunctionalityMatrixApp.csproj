@@ -44,4 +44,10 @@
     <TypeScriptCompile Include="node_modules\bs-custom-file-input\bs-custom-file-input.d.ts" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\pictures\" />
+    <Folder Include="wwwroot\uploads\attachments\" />
+  </ItemGroup>
+
 </Project>

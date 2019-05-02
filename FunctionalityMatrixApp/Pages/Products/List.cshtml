@@ -8,9 +8,9 @@
 <h1>List</h1>
 
 <div>
-    @foreach (var product in Model.Products)
+    @foreach (var product in Model.WrappedProducts)
     {
-        <partial name="_ListItem" model="product" />
+        <partial name="_ListItem" model="product"/>
     }
 </div>
 

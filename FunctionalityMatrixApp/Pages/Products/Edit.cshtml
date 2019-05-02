@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{productId:int?}"
 @model FunctionalityMatrixApp.Pages.Products.EditModel
 @{
     ViewData["Title"] = "Edit";
@@ -6,7 +6,6 @@
 }
 
 <h1>Edit</h1>
-
 <form method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="Product.Id" />
     <div class="form-group">
@@ -64,9 +63,9 @@
             Pictures of the product
         </div>
         <div class="custom-file">
-            <input type="file" class="custom-file-input" asp-for="Upload" multiple>
-            <label class="custom-file-label" asp-for="Upload">Choose file</label>
-            <span class="text-danger" asp-validation-for="Upload"></span>
+            <input type="file" class="custom-file-input" asp-for="PicturesUpload" multiple accept="image/*">
+            <label class="custom-file-label" asp-for="PicturesUpload">Choose file</label>
+            <span class="text-danger" asp-validation-for="PicturesUpload"></span>
         </div>
     </div>
     <div class="form-group">
@@ -79,9 +78,10 @@
             Additional attachments:
         </div>
         <div class="custom-file">
-            <input type="file" class="custom-file-input" id="customFile" multiple>
-            <label class="custom-file-label" for="customFile">Choose file</label>
-            <span class="text-danger" asp-validation-for="Product.Parent"></span>
+            <input type="file" class="custom-file-input" asp-for="AttachmentsUpload" multiple accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
+                text/plain, application/pdf, image/*, video/*">
+            <label class="custom-file-label" asp-for="AttachmentsUpload">Choose file</label>
+            <span class="text-danger"  asp-validation-for="AttachmentsUpload"></span>
         </div>
     </div>
     <button class="btn btn-outline-info">Save changes</button>

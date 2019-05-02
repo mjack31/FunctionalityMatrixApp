@@ -1,5 +1,6 @@
 ﻿using FunctionalityMatrixApp.DataAccess.Interfaces;
 using FunctionalityMatrixApp.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace FunctionalityMatrixApp.DataAccess
 
         public IEnumerable<Product> GetAll()
         {
-            return productsDbContext.Products.Select(p => p);
+            return productsDbContext.Products.Include("Pictures").Select(p => p);
         }
 
         public Product GetById(int id)
