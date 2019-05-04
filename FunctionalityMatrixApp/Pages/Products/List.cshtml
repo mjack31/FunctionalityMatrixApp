@@ -7,10 +7,10 @@
 
 <h1>List</h1>
 
-<div>
+<div class="card-columns">
     @foreach (var product in Model.WrappedProducts)
     {
-        <partial name="_ListItem" model="product"/>
+        <partial name="_ListItem" model="product" />
     }
 </div>
 

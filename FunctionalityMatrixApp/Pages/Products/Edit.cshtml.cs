@@ -33,6 +33,8 @@ namespace FunctionalityMatrixApp.Pages.Products
 
         [BindProperty]
         public Product Product { get; set; }
+        [BindProperty]
+        public int SelectedParentId { get; set; }
 
         [BindProperty]
         public IFormFile[] PicturesUpload { get; set; }
@@ -42,7 +44,6 @@ namespace FunctionalityMatrixApp.Pages.Products
 
         public IEnumerable<SelectListItem> ProductTypes { get; set; }
         public IEnumerable<SelectListItem> AvailableParents { get; set; }
-
         public void OnGet()
         {
             GetAvailableParentsAsSelectListItem();
@@ -51,10 +52,12 @@ namespace FunctionalityMatrixApp.Pages.Products
         public async Task OnPostAsync()
         {
             GetAvailableParentsAsSelectListItem();
+            var selectedParent = productsData.GetById(SelectedParentId);
 
             await PicturesUploadToServer();
             await AttachmentsUploadToServer();
 
+            Product.Parent = selectedParent;
             productsData.Add(Product);
             productsData.Commit();
         }
@@ -112,10 +115,10 @@ namespace FunctionalityMatrixApp.Pages.Products
             {
                 return new SelectListItem()
                 {
-                    Text = p.Name,
+                    Text = $"{p.Name} - id:{p.Id}",
+                    Value = p.Id.ToString()
                 };
             });
-            AvailableParents.Append(null);
         }
     }
 }

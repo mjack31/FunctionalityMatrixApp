@@ -7,11 +7,73 @@
 
 <h1>Details</h1>
 <div class="card">
-    <partial name="_PicturesCarousel" model="Model" />
-    <div class="card-body">
-        <h5 class="card-title">@Model.Product.Name</h5>
-        <p class="card-text">@Model.Product.Content</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+    @if (Model.Pictures.Count() > 0)
+    {
+        <partial name="_PicturesCarousel" model="Model" />
+    }
+<div class="card-body">
+    <h3 class="card-title">@Model.Product.Name</h3>
+    <p class="card-text"><small class="text-muted">@Model.Product.Producer</small></p>
+
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <div class="card-header">Product type:</div>
+            <div class="card-body">
+                <p class="card-text">@Model.Product.ProductType</p>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <div class="card-header">The industry in which it occurs:</div>
+            <div class="card-body">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" asp-for="Product.InFurniture" readonly disabled>
+                    <label class="form-check-label" asp-for="Product.InFurniture">Furnitures</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" asp-for="Product.InAutomotive" readonly disabled>
+                    <label class="form-check-label" asp-for="Product.InAutomotive">Automotive</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" asp-for="Product.InFashion" readonly disabled>
+                    <label class="form-check-label" asp-for="Product.InFashion">Fashion</label>
+                </div>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <div class="card-header">Product status:</div>
+            <div class="card-body">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" asp-for="Product.IsInDevelopment" readonly disabled>
+                    <label class="form-check-label" asp-for="Product.IsInDevelopment">In development</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" asp-for="Product.IsInOffer" readonly disabled>
+                    <label class="form-check-label" asp-for="Product.IsInOffer">In offer</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">Content:</div>
+        <div class="card-body">
+            <p class="card-text">@Model.Product.Content</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            Attachments:
+        </div>
+        <ul class="list-group list-group-flush">
+            @foreach (var attachment in Model.Attachments)
+            {
+                <li class="list-group-item"><a href="@attachment">@attachment</a></li>
+            }
+        </ul>
+    </div>
+    <div class="mt-3">
+        <a class="btn btn-success" asp-page="./Edit" asp-route-productId="@Model.Product.Id">Edit product</a>
+        <a class="btn btn-danger" asp-page="./Delete" asp-route-productId="@Model.Product.Id">Delete product</a>
     </div>
 </div>
-
+</div>

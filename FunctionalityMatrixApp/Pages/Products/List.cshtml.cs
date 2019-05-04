@@ -3,6 +3,7 @@ using FunctionalityMatrixApp.Model;
 using FunctionalityMatrixApp.Wrappers;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,11 +26,26 @@ namespace FunctionalityMatrixApp.Pages.Products
             WrappedProducts = productsData.GetAll().Select(p =>
             {
                 var defaultPictureURL = GetDefaultPictureURL(p);
+                var shortenedContent = GetShortenedContent(p.Content);
                 return new ProductModelWrapper(p)
                 {
                     DefaultPictureURL = defaultPictureURL,
+                    ShortenedContent = shortenedContent
                 };
             });
+        }
+
+        private string GetShortenedContent(string content)
+        {
+            if (content.Length > 200)
+            {
+                return $"{content.Substring(0, 200)}...";
+            }
+            else
+            {
+                return content;
+            }
+
         }
 
         private string GetDefaultPictureURL(Product product)
@@ -42,7 +58,7 @@ namespace FunctionalityMatrixApp.Pages.Products
             }
             else
             {
-                return "No pictures";
+                return null;
             }
         }
     }

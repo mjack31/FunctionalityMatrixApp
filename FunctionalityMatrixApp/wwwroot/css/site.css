@@ -54,3 +54,36 @@ body {
   height: 60px;
   line-height: 60px; /* Vertically center the text there */
 }
+
+
+/* Cards columns responivity */
+@media (min-width: 576px) {
+    .card-columns {
+        column-count: 2;
+    }
+}
+
+@media (min-width: 768px) {
+    .card-columns {
+        column-count: 3;
+    }
+}
+
+@media (min-width: 992px) {
+    .card-columns {
+        column-count: 3;
+    }
+}
+
+@media (min-width: 1200px) {
+    .card-columns {
+        column-count: 4;
+    }
+}
+
+/* Single card style */
+.card-img-top {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
+}

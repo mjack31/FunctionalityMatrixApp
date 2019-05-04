@@ -23,15 +23,24 @@ namespace FunctionalityMatrixApp.Pages.Products
 
         public Product Product { get; set; }
         public IEnumerable<string> Pictures { get; set; }
-
+        public IEnumerable<string> Attachments { get; set; }
         public string Path { get; set; }
 
         public IActionResult OnGet(int productId)
         {
             Product = productsData.GetById(productId);
             Pictures = GetPicturesURLs();
+            Attachments = GetAttachmentsURLs();
 
             return Page();
+        }
+
+        private IEnumerable<string> GetAttachmentsURLs()
+        {
+            foreach (var attachment in Product.Attachments)
+            {
+                yield return Path + attachment.Name;
+            }
         }
 
         private IEnumerable<string> GetPicturesURLs()

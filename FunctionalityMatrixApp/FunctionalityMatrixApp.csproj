@@ -9,6 +9,17 @@
 
   <ItemGroup>
     <Content Include="node_modules\bs-custom-file-input\package.json" />
+    <Content Include="node_modules\slick-carousel\bower.json" />
+    <Content Include="node_modules\slick-carousel\component.json" />
+    <Content Include="node_modules\slick-carousel\index.html" />
+    <Content Include="node_modules\slick-carousel\package.json" />
+    <Content Include="node_modules\slick-carousel\slick.jquery.json" />
+    <Content Include="node_modules\slick-carousel\slick\ajax-loader.gif" />
+    <Content Include="node_modules\slick-carousel\slick\fonts\slick.eot" />
+    <Content Include="node_modules\slick-carousel\slick\fonts\slick.ttf" />
+    <Content Include="node_modules\slick-carousel\slick\fonts\slick.woff" />
+    <Content Include="node_modules\slick-carousel\slick\slick-theme.css" />
+    <Content Include="node_modules\slick-carousel\slick\slick.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +30,20 @@
     <None Include="node_modules\bs-custom-file-input\dist\bs-custom-file-input.min.js.map" />
     <None Include="node_modules\bs-custom-file-input\LICENSE" />
     <None Include="node_modules\bs-custom-file-input\README.md" />
+    <None Include="node_modules\slick-carousel\.npmignore" />
+    <None Include="node_modules\slick-carousel\CONTRIBUTING.markdown" />
+    <None Include="node_modules\slick-carousel\ISSUE_TEMPLATE.md" />
+    <None Include="node_modules\slick-carousel\LICENSE" />
+    <None Include="node_modules\slick-carousel\Makefile" />
+    <None Include="node_modules\slick-carousel\README.markdown" />
+    <None Include="node_modules\slick-carousel\slick\config.rb" />
+    <None Include="node_modules\slick-carousel\slick\fonts\slick.svg" />
+    <None Include="node_modules\slick-carousel\slick\slick-theme.less" />
+    <None Include="node_modules\slick-carousel\slick\slick-theme.scss" />
+    <None Include="node_modules\slick-carousel\slick\slick.js" />
+    <None Include="node_modules\slick-carousel\slick\slick.less" />
+    <None Include="node_modules\slick-carousel\slick\slick.min.js" />
+    <None Include="node_modules\slick-carousel\slick\slick.scss" />
   </ItemGroup>
 
 

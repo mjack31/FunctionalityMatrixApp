@@ -8,7 +8,6 @@ namespace FunctionalityMatrixApp.Wrappers
 {
     public class ProductModelWrapper
     {
-
         public ProductModelWrapper(Product Product)
         {
             this.Product = Product;
@@ -17,5 +16,6 @@ namespace FunctionalityMatrixApp.Wrappers
         public Product Product { get; }
 
         public string DefaultPictureURL { get; set; }
+        public string ShortenedContent { get; set; }
     }
 }

@@ -24,9 +24,11 @@
         <span class="text-danger" asp-validation-for="Product.ProductType"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Product.Parent"></label>
-        <select class="form-control" asp-for="Product.Parent" asp-items="@Model.AvailableParents"></select>
-        <span class="text-danger" asp-validation-for="Product.Parent"></span>
+        <label asp-for="SelectedParentId"></label>
+        <select class="form-control" asp-for="SelectedParentId" asp-items="@Model.AvailableParents">
+            <option selected>- No parent -</option>
+        </select>
+        <span class="text-danger" asp-validation-for="SelectedParentId"></span>
     </div>
     <div class="form-group">
         <div>
@@ -81,7 +83,7 @@
             <input type="file" class="custom-file-input" asp-for="AttachmentsUpload" multiple accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
                 text/plain, application/pdf, image/*, video/*">
             <label class="custom-file-label" asp-for="AttachmentsUpload">Choose file</label>
-            <span class="text-danger"  asp-validation-for="AttachmentsUpload"></span>
+            <span class="text-danger" asp-validation-for="AttachmentsUpload"></span>
         </div>
     </div>
     <button class="btn btn-outline-info">Save changes</button>
