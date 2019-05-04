@@ -13,5 +13,6 @@ namespace FunctionalityMatrixApp.DataAccess.Interfaces
         Product Update(Product id);
         Product Remove(int id);
         int Commit();
+        IEnumerable<Product> GetChilds(int parentId);
     }
 }

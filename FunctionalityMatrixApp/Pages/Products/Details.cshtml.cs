@@ -24,6 +24,7 @@ namespace FunctionalityMatrixApp.Pages.Products
         public Product Product { get; set; }
         public IEnumerable<string> Pictures { get; set; }
         public IEnumerable<string> Attachments { get; set; }
+        public IEnumerable<Product> ChildProducts { get; set; }
         public string Path { get; set; }
 
         public IActionResult OnGet(int productId)
@@ -31,6 +32,7 @@ namespace FunctionalityMatrixApp.Pages.Products
             Product = productsData.GetById(productId);
             Pictures = GetPicturesURLs();
             Attachments = GetAttachmentsURLs();
+            ChildProducts = productsData.GetChilds(productId);
 
             return Page();
         }

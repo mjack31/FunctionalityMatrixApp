@@ -13,15 +13,36 @@
     }
 <div class="card-body">
     <h3 class="card-title">@Model.Product.Name</h3>
-    <p class="card-text"><small class="text-muted">@Model.Product.Producer</small></p>
+    <p class="card-text"><small class="text-muted">by @Model.Product.Producer</small></p>
+
 
     <div class="card-deck">
         <div class="card bg-light mb-3">
-            <div class="card-header">Product type:</div>
+            <div class="card-header">
+                Product type:
+            </div>
             <div class="card-body">
                 <p class="card-text">@Model.Product.ProductType</p>
             </div>
         </div>
+        <div class="card bg-light mb-3">
+            <div class="card-header">
+                The parent product:
+            </div>
+            <div class="card-body">
+                @if (Model.Product.Parent != null)
+                {
+                    <p class="card-text"><a asp-page="./Details" asp-route-productId="@Model.Product.Parent.Id">@Model.Product.Parent.Name</a></p>
+                }
+                else
+                {
+                    <p class="card-text">No parent product</p>
+                }
+            </div>
+        </div>
+    </div>
+    @* Boolean informations *@
+    <div class="card-deck">
         <div class="card bg-light mb-3">
             <div class="card-header">The industry in which it occurs:</div>
             <div class="card-body">
@@ -54,23 +75,39 @@
         </div>
     </div>
 
+    @* Main content *@
     <div class="card bg-light mb-3">
         <div class="card-header">Content:</div>
         <div class="card-body">
             <p class="card-text">@Model.Product.Content</p>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header">
-            Attachments:
+
+    <div class="card-deck">
+        <div class="card">
+            <div class="card-header">
+                Child products:
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var child in Model.ChildProducts)
+                {
+                    <li class="list-group-item"><a asp-page="./Details" asp-route-productId="@child.Id">@child.Name</a></li>
+                }
+            </ul>
         </div>
-        <ul class="list-group list-group-flush">
-            @foreach (var attachment in Model.Attachments)
-            {
-                <li class="list-group-item"><a href="@attachment">@attachment</a></li>
-            }
-        </ul>
+        <div class="card">
+            <div class="card-header">
+                Attachments:
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var attachment in Model.Attachments)
+                {
+                    <li class="list-group-item"><a href="@attachment">@attachment</a></li>
+                }
+            </ul>
+        </div>
     </div>
+
     <div class="mt-3">
         <a class="btn btn-success" asp-page="./Edit" asp-route-productId="@Model.Product.Id">Edit product</a>
         <a class="btn btn-danger" asp-page="./Delete" asp-route-productId="@Model.Product.Id">Delete product</a>

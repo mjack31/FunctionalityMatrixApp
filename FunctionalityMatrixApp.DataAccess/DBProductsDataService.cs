@@ -34,7 +34,12 @@ namespace FunctionalityMatrixApp.DataAccess
 
         public Product GetById(int id)
         {
-            return productsDbContext.Products.Include("Pictures").Include("Attachments").FirstOrDefault(p => p.Id == id);
+            return productsDbContext.Products.Include("Pictures").Include("Attachments").Include("Parent").FirstOrDefault(p => p.Id == id);
+        }
+
+        public IEnumerable<Product> GetChilds(int parentId)
+        {
+            return productsDbContext.Products.Where(p => p.ParentId == parentId);
         }
 
         public Product Remove(int id)
