@@ -1,16 +1,18 @@
 ﻿@using FunctionalityMatrixApp.Wrappers
 @model ProductModelWrapper
 
-<div class="card">
-    @if (Model.DefaultPictureURL != null)
-    {
-        <img src="@Model.DefaultPictureURL" class="card-img-top" alt="@Model.Product.Name">
-    }
-    <div class="card-body">
-        <h5 class="card-title"><a asp-page="./Details" asp-route-productId="@Model.Product.Id">@Model.Product.Name</a></h5>
-        <p class="card-text">@Model.ShortenedContent</p>
-    </div>
-    <div class="card-footer">
-        <small class="text-muted">by @Model.Product.Producer</small>
+<div class="col-sm-6 col-md-6 col-lg-4 mb-3">
+    <div class="card">
+        @if (Model.DefaultPictureURL != null)
+        {
+            <img src="@Model.DefaultPictureURL" class="card-img-top" alt="@Model.Product.Name">
+        }
+        <div class="card-body">
+            <h5 class="card-title"><a asp-page="./Details" asp-route-productId="@Model.Product.Id">@Model.Product.Name</a></h5>
+            <p class="card-text">@Model.ShortenedContent</p>
+        </div>
+        <div class="card-footer">
+            <small class="text-muted">by @Model.Product.Producer</small>
+        </div>
     </div>
 </div>

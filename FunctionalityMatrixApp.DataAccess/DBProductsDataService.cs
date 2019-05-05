@@ -34,7 +34,7 @@ namespace FunctionalityMatrixApp.DataAccess
 
         public Product GetById(int id)
         {
-            return productsDbContext.Products.Include("Pictures").Include("Attachments").Include("Parent").FirstOrDefault(p => p.Id == id);
+            return productsDbContext.Products.Include("Pictures").Include("Attachments").Include("Parent").AsNoTracking().FirstOrDefault(p => p.Id == id);
         }
 
         public IEnumerable<Product> GetChilds(int parentId)
@@ -42,14 +42,65 @@ namespace FunctionalityMatrixApp.DataAccess
             return productsDbContext.Products.Where(p => p.ParentId == parentId);
         }
 
-        public Product Remove(int id)
+        public IEnumerable<string> GetProductAttachmentsURLs(int productId, string path)
         {
-            throw new NotImplementedException();
+            var product = productsDbContext.Products.Include("Attachments").FirstOrDefault(p => p.Id == productId);
+            foreach (var attachment in product.Attachments)
+            {
+                yield return path + attachment.Name;
+            }
         }
 
-        public Product Update(Product id)
+        public IEnumerable<string> GetProductPicturesURLs(int productId, string path)
         {
-            throw new NotImplementedException();
+            var product = productsDbContext.Products.Include("Pictures").FirstOrDefault(p => p.Id == productId);
+            foreach (var picture in product.Pictures)
+            {
+                yield return path + picture.Name;
+            }
+        }
+
+        public Product Remove(int id)
+        {
+            var productToDelete = productsDbContext.Products.FirstOrDefault(p => p.Id == id);
+            if (productToDelete != null)
+            {
+                productsDbContext.Products.Remove(productToDelete);
+                return productToDelete;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public IEnumerable<Attachment> RemoveAttachments(List<int> attachmentsIdsToDelete)
+        {
+            foreach (var id in attachmentsIdsToDelete)
+            {
+                var attachmentToDelete = productsDbContext.Attachments.FirstOrDefault(a => a.Id == id);
+                productsDbContext.Attachments.Remove(attachmentToDelete);
+                yield return attachmentToDelete;
+            }
+            Commit();
+        }
+
+        public IEnumerable<Picture> RemovePictures(List<int> picturesIdsToDelete)
+        {
+            foreach (var id in picturesIdsToDelete)
+            {
+                var pictureToDelete = productsDbContext.Pictures.FirstOrDefault(a => a.Id == id);
+                productsDbContext.Pictures.Remove(pictureToDelete);
+                yield return pictureToDelete;
+            }
+            Commit();
+        }
+
+        public Product Update(Product productToUpdate)
+        {
+            var product = productsDbContext.Products.Attach(productToUpdate);
+            product.State = EntityState.Modified;
+            return productToUpdate;
         }
     }
 }

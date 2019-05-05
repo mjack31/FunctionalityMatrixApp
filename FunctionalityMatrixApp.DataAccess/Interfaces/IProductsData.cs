@@ -10,9 +10,13 @@ namespace FunctionalityMatrixApp.DataAccess.Interfaces
         IEnumerable<Product> GetAll();
         Product GetById(int id);
         Product Add(Product product);
-        Product Update(Product id);
+        Product Update(Product productToUpdate);
         Product Remove(int id);
         int Commit();
         IEnumerable<Product> GetChilds(int parentId);
+        IEnumerable<string> GetProductAttachmentsURLs(int productId, string path);
+        IEnumerable<string> GetProductPicturesURLs(int productId, string path);
+        IEnumerable<Picture> RemovePictures(List<int> picturesIdsToDelete);
+        IEnumerable<Attachment> RemoveAttachments(List<int> attachmentsIdsToDelete);
     }
 }

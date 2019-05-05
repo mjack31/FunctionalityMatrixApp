@@ -3,8 +3,6 @@ using FunctionalityMatrixApp.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace FunctionalityMatrixApp.Pages.Products
@@ -18,39 +16,24 @@ namespace FunctionalityMatrixApp.Pages.Products
         {
             this.productsData = productsData;
             this.configuration = configuration;
-            Path = configuration.GetValue<string>("UploadPaths:Pictures");
+            PicturesPath = configuration.GetValue<string>("UploadPaths:Pictures");
         }
 
         public Product Product { get; set; }
         public IEnumerable<string> Pictures { get; set; }
         public IEnumerable<string> Attachments { get; set; }
         public IEnumerable<Product> ChildProducts { get; set; }
-        public string Path { get; set; }
+        public string PicturesPath { get; set; }
+        public string AttachmentsPath { get; set; }
 
         public IActionResult OnGet(int productId)
         {
             Product = productsData.GetById(productId);
-            Pictures = GetPicturesURLs();
-            Attachments = GetAttachmentsURLs();
+            Pictures = productsData.GetProductPicturesURLs(productId, PicturesPath);
+            Attachments = productsData.GetProductAttachmentsURLs(productId, AttachmentsPath);
             ChildProducts = productsData.GetChilds(productId);
 
             return Page();
-        }
-
-        private IEnumerable<string> GetAttachmentsURLs()
-        {
-            foreach (var attachment in Product.Attachments)
-            {
-                yield return Path + attachment.Name;
-            }
-        }
-
-        private IEnumerable<string> GetPicturesURLs()
-        {
-            foreach (var picture in Product.Pictures)
-            {
-                yield return Path + picture.Name;
-            }
         }
     }
 }

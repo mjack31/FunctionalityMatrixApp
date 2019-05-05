@@ -33,8 +33,15 @@ namespace FunctionalityMatrixApp.Pages.Products
 
         [BindProperty]
         public Product Product { get; set; }
+
         [BindProperty]
         public int SelectedParentId { get; set; }
+
+        [BindProperty]
+        public List<int> AttachmentsIdsToDelete { get; set; }
+
+        [BindProperty]
+        public List<int> PicturesIdsToDelete { get; set; }
 
         [BindProperty]
         public IFormFile[] PicturesUpload { get; set; }
@@ -44,31 +51,55 @@ namespace FunctionalityMatrixApp.Pages.Products
 
         public IEnumerable<SelectListItem> ProductTypes { get; set; }
         public IEnumerable<SelectListItem> AvailableParents { get; set; }
-        public void OnGet()
+
+        public void OnGet(int? productId)
         {
             GetAvailableParentsAsSelectListItem();
+
+            if (productId.HasValue)
+            {
+                Product = productsData.GetById(productId.Value);
+            }
+            else
+            {
+                Product = new Product();
+            }
         }
 
         public async Task OnPostAsync()
         {
             GetAvailableParentsAsSelectListItem();
             var selectedParent = productsData.GetById(SelectedParentId);
+            Product.Parent = selectedParent;
 
             await PicturesUploadToServer();
             await AttachmentsUploadToServer();
 
-            Product.Parent = selectedParent;
-            productsData.Add(Product);
+            var deletedPictures = productsData.RemovePictures(PicturesIdsToDelete);
+            var deletedAttachments = productsData.RemoveAttachments(AttachmentsIdsToDelete);
+
+            PicturesDeleteFromServer(deletedPictures);
+            AttachmentsDeleteFromServer(deletedAttachments);
+
+
+            if (Product.Id > 0)
+            {
+                productsData.Update(Product);
+            }
+            else
+            {
+                productsData.Add(Product);
+            }
             productsData.Commit();
         }
 
         private async Task PicturesUploadToServer()
         {
+            var pathString = configuration.GetValue<string>("UploadPaths:Pictures");
+            var pathLocations = pathString.Split("/");
+
             foreach (var uploadFile in PicturesUpload)
             {
-                var pathString = configuration.GetValue<string>("UploadPaths:Pictures");
-                var pathLocations = pathString.Split("/");
-
                 var uniqueName = GetUniqueFileName(uploadFile.FileName);
                 var path = Path.Combine(webHostEnvironment.WebRootPath, pathLocations[0], pathLocations[1], pathLocations[2], pathLocations[3], uniqueName);
                 using (var fileStream = new FileStream(path, FileMode.Create))
@@ -97,6 +128,36 @@ namespace FunctionalityMatrixApp.Pages.Products
 
                 var attachment = new Attachment() { Name = uniqueName };
                 Product.Attachments.Add(attachment);
+            }
+        }
+
+        private void AttachmentsDeleteFromServer(IEnumerable<Attachment> attachmentsToDelete)
+        {
+            var pathString = configuration.GetValue<string>("UploadPaths:Attachments");
+            var pathLocations = pathString.Split("/");
+
+            foreach (var attachment in attachmentsToDelete)
+            {
+                var path = Path.Combine(webHostEnvironment.WebRootPath, pathLocations[0], pathLocations[1], pathLocations[2], pathLocations[3], attachment.Name);
+                if(System.IO.File.Exists(path))
+                {
+                    System.IO.File.Delete(path);
+                }
+            }
+        }
+
+        private void PicturesDeleteFromServer(IEnumerable<Picture> picturesToDelete)
+        {
+            var pathString = configuration.GetValue<string>("UploadPaths:Pictures");
+            var pathLocations = pathString.Split("/");
+
+            foreach (var picture in picturesToDelete)
+            {
+                var path = Path.Combine(webHostEnvironment.WebRootPath, pathLocations[0], pathLocations[1], pathLocations[2], pathLocations[3], picture.Name);
+                if (System.IO.File.Exists(path))
+                {
+                    System.IO.File.Delete(path);
+                }
             }
         }
 

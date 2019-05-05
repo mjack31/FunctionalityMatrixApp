@@ -1,17 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using FunctionalityMatrixApp.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FunctionalityMatrixApp.Pages.Products
 {
     public class DeleteModel : PageModel
     {
-        public void OnGet()
-        {
+        private readonly IProductsData productsData;
 
+        public DeleteModel(IProductsData productsData)
+        {
+            this.productsData = productsData;
+        }
+
+        public void OnGet(int productId)
+        {
+            productsData.Remove(productId);
+            productsData.Commit();
         }
     }
 }

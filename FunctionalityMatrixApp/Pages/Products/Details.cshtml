@@ -89,9 +89,16 @@
                 Child products:
             </div>
             <ul class="list-group list-group-flush">
-                @foreach (var child in Model.ChildProducts)
+                @if (Model.ChildProducts.Count() > 0)
                 {
-                    <li class="list-group-item"><a asp-page="./Details" asp-route-productId="@child.Id">@child.Name</a></li>
+                    foreach (var child in Model.ChildProducts)
+                    {
+                        <li class="list-group-item"><a asp-page="./Details" asp-route-productId="@child.Id">@child.Name</a></li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item">No child products</li>
                 }
             </ul>
         </div>
@@ -100,9 +107,16 @@
                 Attachments:
             </div>
             <ul class="list-group list-group-flush">
-                @foreach (var attachment in Model.Attachments)
+                @if (Model.Attachments.Count() > 0)
                 {
-                    <li class="list-group-item"><a href="@attachment">@attachment</a></li>
+                    foreach (var attachment in Model.Attachments)
+                    {
+                        <li class="list-group-item"><a href="@attachment">@attachment</a></li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item">No attachments</li>
                 }
             </ul>
         </div>
