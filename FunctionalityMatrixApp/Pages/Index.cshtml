@@ -4,6 +4,131 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+<div class="jumbotron">
+    <h1 class="display-4">Hello to Functionality Matrix application!</h1>
+    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <hr class="my-4">
+    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
 </div>
+<div class="row">
+    <div class="col-sm">
+        <canvas id="industryTypeChart" width="400" height="400"></canvas>
+    </div>
+    <div class="col-sm">
+        <canvas id="statusChart" width="400" height="400"></canvas>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+<script type="text/javascript">
+
+    function GetIndustryData(products) {
+        let data = {
+            automotive: 0,
+            furniture: 0,
+            fashion: 0,
+        }
+
+        products.forEach(product => {
+            if (product.inAutomotive) data.automotive++;
+            if (product.inFashion) data.fashion++;
+            if (product.inFurniture) data.furniture++;
+        });
+
+        return data;
+    }
+
+    function buildIndustryTypeChart(data) {
+        let chartData = {
+            datasets: [{
+                data: [data.automotive, data.fashion, data.furniture],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                ],
+                borderWidth: 1,
+            }],
+
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+                'Automotive',
+                'Fashion',
+                'Furniture'
+            ]
+        };
+
+        console.log(chartData);
+
+        let ctx = document.getElementById('industryTypeChart').getContext('2d');
+        let myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: chartData,
+            options: Chart.defaults.doughnut
+        });
+    }
+
+    function buildStatusChart(data) {
+        let chartData = {
+            datasets: [{
+                data: [data.automotive, data.fashion, data.furniture],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                ],
+                borderWidth: 1,
+            }],
+
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+                'Automotive',
+                'Fashion',
+                'Furniture'
+            ]
+        };
+
+        console.log(chartData);
+
+        let ctx = document.getElementById('statusChart').getContext('2d');
+        let myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: chartData,
+            options: Chart.defaults.doughnut
+        });
+    }
+
+    function buildProductTypeChart(data) {
+
+    }
+
+    async function app() {
+
+        const products = await fetch("/api/Products").then(res => res.json());
+        const industryData = GetIndustryData(products);
+
+        console.log(products);
+
+        buildIndustryTypeChart(industryData);
+        buildStatusChart(industryData);
+        buildProductTypeChart(industryData);
+    }
+
+    app();
+</script>
+}
