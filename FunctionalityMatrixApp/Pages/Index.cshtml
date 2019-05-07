@@ -4,19 +4,31 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="jumbotron">
+<div class="jumbotron border-light-grey">
     <h1 class="display-4">Hello to Functionality Matrix application!</h1>
-    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <p>
+        It is an application on which you can see all Allcomp company products. You will find here basic information and statistics about them.
+    </p>
     <hr class="my-4">
-    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    <p>You can see here all the products!</p>
+    <a class="btn btn-outline-danger" asp-page="./Products/List">Show products</a>
 </div>
 <div class="row">
-    <div class="col-sm">
-        <canvas id="industryTypeChart" width="400" height="400"></canvas>
+    <div class="col-md-6">
+        <div class="card border-light-grey">
+            <div class="card-header">Informations about industry in which products occur and their status:</div>
+            <div class="card-body">
+                <canvas id="industryAndStatusChart" width="400" height="400"></canvas>
+            </div>
+        </div>
     </div>
-    <div class="col-sm">
-        <canvas id="statusChart" width="400" height="400"></canvas>
+    <div class="col-md-6">
+        <div class="card border-light-grey">
+            <div class="card-header">Informations about products types:</div>
+            <div class="card-body">
+                <canvas id="productTypeChart" width="400" height="400"></canvas>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -27,106 +39,149 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
 <script type="text/javascript">
 
-    function GetIndustryData(products) {
+    function GetIndustryAndStatusData(products) {
         let data = {
+            products: 0,
             automotive: 0,
             furniture: 0,
             fashion: 0,
+            inDevelopment: 0,
+            inOffer: 0,
+            isAllcomp: 0
         }
 
+        data.products = products.length;
         products.forEach(product => {
             if (product.inAutomotive) data.automotive++;
-            if (product.inFashion) data.fashion++;
             if (product.inFurniture) data.furniture++;
+            if (product.inFashion) data.fashion++;
+            if (product.isInDevelopment) data.inDevelopment++;
+            if (product.isInOffer) data.inOffer++;
+            if (product.isAllcomp) data.isAllcomp++;
         });
 
         return data;
     }
 
-    function buildIndustryTypeChart(data) {
-        let chartData = {
-            datasets: [{
-                data: [data.automotive, data.fashion, data.furniture],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                ],
-                borderWidth: 1,
-            }],
+    function GetProductTypeData(products) {
+        let data = {
+            machine: 0,
+            software: 0,
+            service: 0,
+            option: 0,
+        }
 
-            // These labels appear in the legend and in the tooltips when hovering different arcs
-            labels: [
-                'Automotive',
-                'Fashion',
-                'Furniture'
-            ]
-        };
-
-        console.log(chartData);
-
-        let ctx = document.getElementById('industryTypeChart').getContext('2d');
-        let myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: chartData,
-            options: Chart.defaults.doughnut
+        products.forEach(product => {
+            switch (product.productType) {
+                case 0:
+                    data.machine++;
+                    break;
+                case 1:
+                    data.software++;
+                    break;
+                case 2:
+                    data.service++;
+                    break;
+                case 3:
+                    data.option++;
+                    break;
+            };
         });
-    }
 
-    function buildStatusChart(data) {
+        return data;
+    };
+
+    function buildIndustryAndStatusChart(data) {
         let chartData = {
             datasets: [{
-                data: [data.automotive, data.fashion, data.furniture],
+                data: [data.products, data.automotive, data.furniture, data.fashion, data.inDevelopment, data.inOffer, data.isAllcomp],
                 backgroundColor: [
+                    'rgba(75, 50, 192, 0.2)',
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
                     'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
                 ],
                 borderColor: [
+                    'rgba(75, 50, 192, 1)',
                     'rgba(255, 99, 132, 1)',
                     'rgba(54, 162, 235, 1)',
                     'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
                 ],
                 borderWidth: 1,
             }],
 
             // These labels appear in the legend and in the tooltips when hovering different arcs
             labels: [
+                'Products',
                 'Automotive',
+                'Furniture',
                 'Fashion',
-                'Furniture'
+                'Is in development',
+                'Is in offer',
+                'Allcomp'
             ]
         };
 
-        console.log(chartData);
-
-        let ctx = document.getElementById('statusChart').getContext('2d');
+        let ctx = document.getElementById('industryAndStatusChart').getContext('2d');
         let myChart = new Chart(ctx, {
-            type: 'doughnut',
+            type: 'polarArea',
             data: chartData,
-            options: Chart.defaults.doughnut
+            options: Chart.defaults.polarArea
         });
     }
 
     function buildProductTypeChart(data) {
+        let chartData = {
+            datasets: [{
+                data: [data.machine, data.software, data.service, data.option],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                ],
+                borderWidth: 1,
+            }],
 
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+                'Machine',
+                'Software',
+                'Service',
+                'Option'
+            ]
+        };
+
+        let ctx = document.getElementById('productTypeChart').getContext('2d');
+        let myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: chartData,
+            options: Chart.defaults.doughnut
+        });
     }
 
     async function app() {
 
         const products = await fetch("/api/Products").then(res => res.json());
-        const industryData = GetIndustryData(products);
+        const industryAndStatusData = GetIndustryAndStatusData(products);
+        const productTypeData = GetProductTypeData(products);
 
         console.log(products);
 
-        buildIndustryTypeChart(industryData);
-        buildStatusChart(industryData);
-        buildProductTypeChart(industryData);
+        buildIndustryAndStatusChart(industryAndStatusData);
+        buildProductTypeChart(productTypeData);
     }
 
     app();
