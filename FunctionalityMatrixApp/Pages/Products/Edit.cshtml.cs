@@ -70,7 +70,7 @@ namespace FunctionalityMatrixApp.Pages.Products
         {
             GetAvailableParentsAsSelectListItem();
             var selectedParent = productsData.GetById(SelectedParentId);
-            Product.Parent = selectedParent;
+            Product.ParentId = selectedParent.Id;
 
             await PicturesUploadToServer();
             await AttachmentsUploadToServer();
