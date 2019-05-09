@@ -29,11 +29,19 @@ namespace FunctionalityMatrixApp.Pages.Products
         public IActionResult OnGet(int productId)
         {
             Product = productsData.GetById(productId);
-            Pictures = productsData.GetProductPicturesURLs(productId, PicturesPath);
-            Attachments = productsData.GetProductAttachmentsURLs(productId, AttachmentsPath);
-            ChildProducts = productsData.GetChilds(productId);
 
-            return Page();
+            if(Product == null)
+            {
+                return RedirectToPage("NotFound");
+            }
+            else
+            {
+                Pictures = productsData.GetProductPicturesURLs(productId, PicturesPath);
+                Attachments = productsData.GetProductAttachmentsURLs(productId, AttachmentsPath);
+                ChildProducts = productsData.GetChilds(productId);
+
+                return Page();
+            }
         }
     }
 }

@@ -52,7 +52,7 @@ namespace FunctionalityMatrixApp.Pages.Products
         public IEnumerable<SelectListItem> ProductTypes { get; set; }
         public IEnumerable<SelectListItem> AvailableParents { get; set; }
 
-        public void OnGet(int? productId)
+        public IActionResult OnGet(int? productId)
         {
             GetAvailableParentsAsSelectListItem();
 
@@ -64,14 +64,26 @@ namespace FunctionalityMatrixApp.Pages.Products
             {
                 Product = new Product();
             }
+
+            if(Product == null)
+            {
+                return RedirectToPage("NotFound");
+            }
+            else
+            {
+                return Page();
+            }
         }
 
-        public async Task OnPostAsync()
+        public async Task<IActionResult> OnPostAsync()
         {
             GetAvailableParentsAsSelectListItem();
             var selectedParent = productsData.GetById(SelectedParentId);
-            Product.ParentId = selectedParent.Id;
-
+            if(selectedParent != null)
+            {
+                Product.ParentId = selectedParent.Id;
+            };
+            
             await PicturesUploadToServer();
             await AttachmentsUploadToServer();
 
@@ -85,12 +97,15 @@ namespace FunctionalityMatrixApp.Pages.Products
             if (Product.Id > 0)
             {
                 productsData.Update(Product);
+                productsData.Commit();
+                return RedirectToPage("Details", new { productId = Product.Id});
             }
             else
             {
                 productsData.Add(Product);
+                productsData.Commit();
+                return RedirectToPage("List");
             }
-            productsData.Commit();
         }
 
         private async Task PicturesUploadToServer()
