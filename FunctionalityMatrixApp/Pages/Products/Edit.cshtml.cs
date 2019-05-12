@@ -59,6 +59,10 @@ namespace FunctionalityMatrixApp.Pages.Products
             if (productId.HasValue)
             {
                 Product = productsData.GetById(productId.Value);
+                if (Product.ParentId.HasValue)
+                {
+                    SelectedParentId = Product.ParentId.Value;
+                }
             }
             else
             {
@@ -78,11 +82,14 @@ namespace FunctionalityMatrixApp.Pages.Products
         public async Task<IActionResult> OnPostAsync()
         {
             GetAvailableParentsAsSelectListItem();
-            var selectedParent = productsData.GetById(SelectedParentId);
-            if(selectedParent != null)
+
+            if(SelectedParentId != -1)
             {
-                Product.ParentId = selectedParent.Id;
-            };
+                Product.ParentId = SelectedParentId;
+            } else
+            {
+                Product.ParentId = null;
+            }
             
             await PicturesUploadToServer();
             await AttachmentsUploadToServer();
@@ -93,18 +100,26 @@ namespace FunctionalityMatrixApp.Pages.Products
             PicturesDeleteFromServer(deletedPictures);
             AttachmentsDeleteFromServer(deletedAttachments);
 
-
-            if (Product.Id > 0)
+            if(ModelState.IsValid)
             {
-                productsData.Update(Product);
-                productsData.Commit();
-                return RedirectToPage("Details", new { productId = Product.Id});
+                if (Product.Id > 0)
+                {
+                    productsData.Update(Product);
+                    productsData.Commit();
+                    TempData["Message"] = "Product updated";
+                    return RedirectToPage("Details", new { productId = Product.Id });
+                }
+                else
+                {
+                    productsData.Add(Product);
+                    productsData.Commit();
+                    TempData["Message"] = "Product added";
+                    return RedirectToPage("List");
+                }
             }
             else
             {
-                productsData.Add(Product);
-                productsData.Commit();
-                return RedirectToPage("List");
+                return Page();
             }
         }
 

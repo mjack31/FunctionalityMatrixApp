@@ -29,7 +29,7 @@ namespace FunctionalityMatrixApp.DataAccess
 
         public IEnumerable<Product> GetAll()
         {
-            return productsDbContext.Products.Include("Pictures").Select(p => p);
+            return productsDbContext.Products.Include("Pictures").AsNoTracking().Select(p => p);
         }
 
         public Product GetById(int id)

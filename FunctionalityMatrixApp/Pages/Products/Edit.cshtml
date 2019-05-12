@@ -29,7 +29,7 @@
     <div class="form-group">
         <label asp-for="SelectedParentId"></label>
         <select class="form-control" asp-for="SelectedParentId" asp-items="@Model.AvailableParents">
-            <option selected>- No parent -</option>
+            <option selected value="-1">-- No parent --</option>
         </select>
     </div>
 
@@ -146,6 +146,9 @@
     <environment exclude="Development">
         <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
     </environment>
+
+    @* Client side validation *@
+    <partial name="_ValidationScriptsPartial" />
 
     @* Dynamic file input *@
     <script>

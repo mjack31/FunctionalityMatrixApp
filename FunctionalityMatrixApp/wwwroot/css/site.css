@@ -59,12 +59,12 @@ body {
 }
 
 .list-card {
-
+    min-height: 350px;
 }
 
 .list-card-img {
     width: 100%;
-    height: 200px;
+    height: 150px;
     object-fit: cover;
 }
 
