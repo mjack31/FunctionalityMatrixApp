@@ -18,5 +18,7 @@ namespace FunctionalityMatrixApp.DataAccess.Interfaces
         IEnumerable<string> GetProductPicturesURLs(int productId, string path);
         IEnumerable<Picture> RemovePictures(List<int> picturesIdsToDelete);
         IEnumerable<Attachment> RemoveAttachments(List<int> attachmentsIdsToDelete);
+        IEnumerable<Product> GetByName(string name);
+        IEnumerable<Product> GetByName(string name, ProductType type);
     }
 }

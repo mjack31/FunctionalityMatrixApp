@@ -6,7 +6,7 @@ namespace FunctionalityMatrixApp.Model
 {
     public enum ProductType
     {
-        Machine,
+        Machine = 1,
         Software,
         Service,
         Option

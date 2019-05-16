@@ -1,6 +1,8 @@
 ﻿using FunctionalityMatrixApp.DataAccess.Interfaces;
 using FunctionalityMatrixApp.Model;
+using FunctionalityMatrixApp.Services;
 using FunctionalityMatrixApp.Wrappers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -9,30 +11,55 @@ using System.Linq;
 
 namespace FunctionalityMatrixApp.Pages.Products
 {
-    public class ListModel : PageModel
+    public class ListModel : PageModel, ISearchable
     {
         private readonly IProductsData productsData;
         private readonly IConfiguration configuration;
 
         public IEnumerable<ProductModelWrapper> WrappedProducts { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string SearchTerm { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public ProductType ProductFilter { get; set; }
+
         public ListModel(IProductsData productsData, IConfiguration configuration)
         {
             this.productsData = productsData;
             this.configuration = configuration;
         }
 
-        public void OnGet()
+        public void OnGet(ProductType productFilter)
         {
-            WrappedProducts = productsData.GetAll().Select(p =>
+            ProductFilter = productFilter;
+
+            if (productFilter == 0)
             {
-                var defaultPictureURL = GetDefaultPictureURL(p);
-                var shortenedContent = GetShortenedContent(p.Content);
-                return new ProductModelWrapper(p)
+                WrappedProducts = productsData.GetByName(SearchTerm).Select(p =>
                 {
-                    DefaultPictureURL = defaultPictureURL,
-                    ShortenedContent = shortenedContent
-                };
-            });
+                    var defaultPictureURL = GetDefaultPictureURL(p);
+                    var shortenedContent = GetShortenedContent(p.Content);
+                    return new ProductModelWrapper(p)
+                    {
+                        DefaultPictureURL = defaultPictureURL,
+                        ShortenedContent = shortenedContent
+                    };
+                });
+            }
+            else
+            {
+                WrappedProducts = productsData.GetByName(SearchTerm, ProductFilter).Select(p =>
+                {
+                    var defaultPictureURL = GetDefaultPictureURL(p);
+                    var shortenedContent = GetShortenedContent(p.Content);
+                    return new ProductModelWrapper(p)
+                    {
+                        DefaultPictureURL = defaultPictureURL,
+                        ShortenedContent = shortenedContent
+                    };
+                });
+            }
         }
 
         private string GetShortenedContent(string content)
@@ -45,7 +72,6 @@ namespace FunctionalityMatrixApp.Pages.Products
             {
                 return content;
             }
-
         }
 
         private string GetDefaultPictureURL(Product product)

@@ -5,11 +5,21 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h1>List</h1>
 @if (TempData["Message"] != null)
 {
     <div class="alert alert-danger">@TempData["Message"]</div>
 }
+
+<form method="get" class="form-group">
+    <input type="hidden" asp-for="ProductFilter" />
+    <div class="input-group">
+        <input type="search" class="form-control" placeholder="Search..." aria-label="Search..." asp-for="SearchTerm">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary">Search</button>
+        </div>
+    </div>
+</form>
+
 <div class="row">
     @foreach (var product in Model.WrappedProducts)
     {

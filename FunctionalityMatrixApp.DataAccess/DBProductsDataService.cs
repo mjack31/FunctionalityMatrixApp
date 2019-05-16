@@ -29,12 +29,22 @@ namespace FunctionalityMatrixApp.DataAccess
 
         public IEnumerable<Product> GetAll()
         {
-            return productsDbContext.Products.Include("Pictures").AsNoTracking().Select(p => p);
+            return productsDbContext.Products.Include("Pictures").Include("Attachments").Include("Parent").AsNoTracking().Select(p => p);
         }
 
         public Product GetById(int id)
         {
             return productsDbContext.Products.Include("Pictures").Include("Attachments").Include("Parent").AsNoTracking().FirstOrDefault(p => p.Id == id);
+        }
+
+        public IEnumerable<Product> GetByName(string name)
+        {
+            return productsDbContext.Products.Include("Pictures").OrderBy(t => t.Name).Where(t => string.IsNullOrEmpty(name) || t.Name.Contains(name));
+        }
+
+        public IEnumerable<Product> GetByName(string name, ProductType type)
+        {
+            return productsDbContext.Products.Include("Pictures").OrderBy(t => t.Name).Where(t => t.ProductType == type && (string.IsNullOrEmpty(name) || t.Name.Contains(name)));
         }
 
         public IEnumerable<Product> GetChilds(int parentId)
