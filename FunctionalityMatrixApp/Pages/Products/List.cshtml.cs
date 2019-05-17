@@ -1,7 +1,7 @@
 ﻿using FunctionalityMatrixApp.DataAccess.Interfaces;
 using FunctionalityMatrixApp.Model;
-using FunctionalityMatrixApp.Services;
 using FunctionalityMatrixApp.Wrappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace FunctionalityMatrixApp.Pages.Products
 {
-    public class ListModel : PageModel, ISearchable
+    public class ListModel : PageModel
     {
         private readonly IProductsData productsData;
         private readonly IConfiguration configuration;

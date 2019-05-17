@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -56,8 +57,10 @@ namespace FunctionalityMatrixApp
             {
                 config.AddPolicy("RequireAdministratorRole",
                     policy => policy.RequireRole("Administrator"));
-                config.AddPolicy("RequireMemberRole",
-                    policy => policy.RequireRole("Member"));
+                config.AddPolicy("RequireEditorRole",
+                    policy => policy.RequireRole("Editor"));
+                config.AddPolicy("RequireObserverRole",
+                    policy => policy.RequireRole("Observer"));
             });
 
             services.AddTransient<IEmailSender, EmailSender>();
@@ -67,7 +70,11 @@ namespace FunctionalityMatrixApp
                 .AddNewtonsoftJson()
                 .AddRazorPagesOptions(options =>
                 {
+                    options.Conventions.AuthorizePage("/Products/List", "RequireObserverRole");
+                    options.Conventions.AuthorizePage("/Products/Details", "RequireObserverRole");
 
+                    options.Conventions.AuthorizePage("/Products/Delete", "RequireMemberRole");
+                    options.Conventions.AuthorizePage("/Products/Edit", "RequireMemberRole");
                 });
         }
 
@@ -125,7 +132,7 @@ namespace FunctionalityMatrixApp
         private async Task CreateRolesAsync(RoleManager<IdentityRole> roleManager)
         {
             //adding custom roles
-            string[] roleNames = { "Admin", "Member", "Outcast" };
+            string[] roleNames = { "Administrator", "Editor", "Observer" };
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)
@@ -141,15 +148,16 @@ namespace FunctionalityMatrixApp
 
         private async Task CreateSuperUser(UserManager<IdentityUser> userManager)
         {
-            var superUser = new IdentityUser { UserName = Configuration["SuperUserLogin"], Email = Configuration["SuperUserLogin"] };
-            await userManager.CreateAsync(superUser, Configuration["SuperUserPassword"]);
+            var superUser = new IdentityUser { UserName = "Yelinek8@Yelinek8.com", Email = "Yelinek8@Yelinek8.com" };
+            await userManager.CreateAsync(superUser, "Dupasaca.123");
             var token = await userManager.GenerateEmailConfirmationTokenAsync(superUser);
             await userManager.ConfirmEmailAsync(superUser, token);
-            await userManager.AddToRoleAsync(superUser, "Admin");
+
+            await userManager.AddToRolesAsync(superUser, new string[] {
+                "Administrator",
+                "Editor",
+                "Observer"
+            });
         }
-
-
-
-
     }
 }
