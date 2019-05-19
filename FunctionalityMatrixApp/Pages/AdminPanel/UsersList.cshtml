@@ -1,0 +1,15 @@
+﻿@page
+@model FunctionalityMatrixApp.Pages.AdminPanel.UsersListModel
+@{
+    ViewData["Title"] = "UsersList";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h3>Users list:</h3>
+<ul class="list-group list-group-flush">
+    @foreach (var user in Model.Users)
+    {
+        <li class="list-group-item"><a asp-page="./User" asp-route-userId="@user.Id">@user.UserName</a></li>
+    }
+</ul>
+

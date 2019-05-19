@@ -15,7 +15,6 @@ namespace FunctionalityMatrixApp.Pages.Products
             this.productsData = productsData;
         }
 
-        [BindProperty]
         public Product Product { get; set; }
 
         public IActionResult OnGet(int productId)

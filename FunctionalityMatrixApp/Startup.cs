@@ -73,8 +73,10 @@ namespace FunctionalityMatrixApp
                     options.Conventions.AuthorizePage("/Products/List", "RequireObserverRole");
                     options.Conventions.AuthorizePage("/Products/Details", "RequireObserverRole");
 
-                    options.Conventions.AuthorizePage("/Products/Delete", "RequireMemberRole");
-                    options.Conventions.AuthorizePage("/Products/Edit", "RequireMemberRole");
+                    options.Conventions.AuthorizePage("/Products/Delete", "RequireEditorRole");
+                    options.Conventions.AuthorizePage("/Products/Edit", "RequireEditorRole");
+
+                    options.Conventions.AuthorizeFolder("/AdminPanel", "RequireAdministratorRole");
                 });
         }
 
