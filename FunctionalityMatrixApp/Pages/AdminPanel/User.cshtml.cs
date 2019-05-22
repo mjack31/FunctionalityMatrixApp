@@ -19,79 +19,73 @@ namespace FunctionalityMatrixApp.Pages.AdminPanel
             this.roleManager = roleManager;
         }
 
-        [BindProperty]
         public IdentityUser SelectedUser { get; set; }
+
         [BindProperty]
-        public bool IsAdmin { get; set; }
-        [BindProperty]
-        public bool IsEditor { get; set; }
-        [BindProperty]
-        public bool IsObserver { get; set; }
+        public List<string> SelectedRoles { get; set; }
+
+        public List<string> CurrentRoles { get; set; }
+
+        public List<IdentityRole> AvailableRoles { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string userId)
         {
             SelectedUser = await userManager.FindByIdAsync(userId);
-            if(SelectedUser != null)
+            if (SelectedUser == null)
             {
-                await GetRolesAsBools(SelectedUser);
+                return Redirect("NotFound");
+            }
 
-                return Page();
-            }
-            else
-            {
-                return RedirectToPage("NotFound");
-            }
-        }
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            SelectedUser = await userManager.FindByIdAsync(SelectedUser.Id);
-            if (SelectedUser != null)
-            {
-                var selectedRoles = GetCurrentRolesAsList();
-                await userManager.RemoveFromRolesAsync(SelectedUser, new List<string>()
-                {
-                    "Observer",
-                    "Editor",
-                    "Administrator"
-                });
-            }
-            else
-            {
-                return RedirectToPage("NotFound");
-            }
+            AvailableRoles = roleManager.Roles.ToList();
+            CurrentRoles = await userManager.GetRolesAsync(SelectedUser) as List<string>;
             return Page();
         }
 
-        private async Task GetRolesAsBools(IdentityUser user)
+        public async Task<IActionResult> OnPostAsync(string userId)
         {
-            var roles = await userManager.GetRolesAsync(user);
-            foreach (var role in roles)
+            SelectedUser = await userManager.FindByIdAsync(userId);
+
+            if (SelectedUser == null)
             {
-                switch (role)
-                {
-                    case "Observer":
-                        IsObserver = true;
-                        break;
-                    case "Editor":
-                        IsEditor = true;
-                        break;
-                    case "Administrator":
-                        IsAdmin = true;
-                        break;
-                    default:
-                        throw new Exception("Unknown role assigmnet");
-                }
+                return NotFound("User not found");
             }
+
+            AvailableRoles = roleManager.Roles.ToList();
+            CurrentRoles = await userManager.GetRolesAsync(SelectedUser) as List<string>;
+
+            var rolesToDelete = GetRolesToDelete(CurrentRoles, SelectedRoles);
+            var rolesToAdd = GetRolesToAdd(CurrentRoles, SelectedRoles);
+
+            var removeRolesResult = await userManager.RemoveFromRolesAsync(SelectedUser, rolesToDelete);
+            if (!removeRolesResult.Succeeded)
+            {
+                throw new Exception("Cannot remove roles");
+            }
+
+            var addRolesResult = await userManager.AddToRolesAsync(SelectedUser, rolesToAdd);
+            if (!addRolesResult.Succeeded)
+            {
+                throw new Exception("Cannot add roles");
+            }
+
+            var updateUserResult = await userManager.UpdateAsync(SelectedUser);
+            if(!updateUserResult.Succeeded)
+            {
+                throw new Exception("Cannot update user");
+            }
+
+            // Thx to RedirectToPage() (not Page()) the form is properly refreshed
+            return RedirectToPage();
         }
 
-        private List<string> GetCurrentRolesAsList()
+        private List<string> GetRolesToAdd(List<string> currentRoles, List<string> selectedRoles)
         {
-            List<string> roles = new List<string>();
-            if (IsObserver) roles.Add("Observer");
-            if (IsEditor) roles.Add("Editor");
-            if (IsAdmin) roles.Add("Administrator");
-            return roles;
+            return selectedRoles.Except(currentRoles).ToList();
+        }
+
+        private List<string> GetRolesToDelete(List<string> currentRoles, List<string> selectedRoles)
+        {
+            return currentRoles.Except(selectedRoles).ToList(); 
         }
     }
 }

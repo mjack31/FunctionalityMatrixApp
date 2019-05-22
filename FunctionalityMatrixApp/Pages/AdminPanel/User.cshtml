@@ -6,11 +6,11 @@
 }
 
 <h3>User</h3>
-@* Main informations (id, name, producer) *@
-<input type="hidden" asp-for="SelectedUser.Id" />
+@* Main informations (name, producer) *@
+@*<input type="hidden" asp-for="SelectedUser.Id" />*@
 <div class="form-group">
     <label asp-for="SelectedUser.UserName"></label>
-    <input class="form-control" asp-for="SelectedUser.UserName" disabled/>
+    <input class="form-control" asp-for="SelectedUser.UserName" disabled />
 </div>
 
 @* Boolean information *@
@@ -19,18 +19,21 @@
         <div>
             Authorization roles:
         </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" asp-for="IsObserver">
-            <label class="form-check-label" asp-for="IsObserver">Observer role</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" asp-for="IsEditor">
-            <label class="form-check-label" asp-for="IsEditor">Editor role</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" asp-for="IsAdmin">
-            <label class="form-check-label" asp-for="IsAdmin">Administrator role</label>
-        </div>
+
+        @for (var i = 0; i < Model.AvailableRoles.Count; i++)
+        {
+            <div class="form-check form-check-inline">
+                @if (Model.CurrentRoles.Contains(@Model.AvailableRoles[i].Name))
+                {
+                    <input class="form-check-input" name="SelectedRoles" type="checkbox" value="@Model.AvailableRoles[i].Name" id="@Model.AvailableRoles[i].Id" checked="checked" />
+                }
+                else
+                {
+                    <input class="form-check-input" name="SelectedRoles" type="checkbox" value="@Model.AvailableRoles[i].Name" id="@Model.AvailableRoles[i].Id" />
+                }
+                <label class="form-check-label" for="@Model.AvailableRoles[i].Id">@Model.AvailableRoles[i].Name role</label>
+            </div>
+        }
     </div>
     <button class="btn btn-outline-info">Save changes</button>
 </form>
