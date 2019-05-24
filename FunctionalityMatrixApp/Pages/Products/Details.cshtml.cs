@@ -16,7 +16,6 @@ namespace FunctionalityMatrixApp.Pages.Products
         {
             this.productsData = productsData;
             this.configuration = configuration;
-            PicturesPath = configuration.GetValue<string>("UploadPaths:Pictures");
         }
 
         public Product Product { get; set; }
@@ -28,6 +27,9 @@ namespace FunctionalityMatrixApp.Pages.Products
 
         public IActionResult OnGet(int productId)
         {
+            PicturesPath = configuration.GetValue<string>("UploadPaths:Pictures");
+            AttachmentsPath = configuration.GetValue<string>("UploadPaths:Attachments");
+
             Product = productsData.GetById(productId);
 
             if(Product == null)

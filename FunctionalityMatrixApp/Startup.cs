@@ -2,6 +2,7 @@ using FunctionalityMatrix.Services;
 using FunctionalityMatrixApp.Data;
 using FunctionalityMatrixApp.DataAccess;
 using FunctionalityMatrixApp.DataAccess.Interfaces;
+using FunctionalityMatrixApp.Services.ServerFilesManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -44,6 +45,7 @@ namespace FunctionalityMatrixApp
                      Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IProductsData, DBProductsDataService>();
+            services.AddScoped<IServerFilesManager, ServerFilesManager>();
 
             services.AddDefaultIdentity<IdentityUser>(config =>
             {
@@ -150,8 +152,16 @@ namespace FunctionalityMatrixApp
 
         private async Task CreateSuperUser(UserManager<IdentityUser> userManager)
         {
-            var superUser = new IdentityUser { UserName = "Yelinek8@Yelinek8.com", Email = "Yelinek8@Yelinek8.com" };
-            await userManager.CreateAsync(superUser, "Dupasaca.123");
+            var superUserLogin = Configuration.GetValue<string>("superUserLogin");
+            var superUserPassword = Configuration.GetValue<string>("superUserPassword");
+
+            if(string.IsNullOrEmpty(superUserLogin) || string.IsNullOrEmpty(superUserPassword))
+            {
+                throw new System.Exception("No super user login and password");
+            }
+
+            var superUser = new IdentityUser { UserName = superUserLogin, Email = superUserLogin };
+            await userManager.CreateAsync(superUser, superUserPassword);
             var token = await userManager.GenerateEmailConfirmationTokenAsync(superUser);
             await userManager.ConfirmEmailAsync(superUser, token);
 

@@ -20,6 +20,10 @@ namespace FunctionalityMatrix.Services
 
         public Task SendEmailAsync(string email, string subject, string message)
         {
+            if (string.IsNullOrEmpty(Options.SendGridKey))
+            {
+                throw new Exception("No SendGrid key");
+            }
             return Execute(Options.SendGridKey, subject, message, email);
         }
 

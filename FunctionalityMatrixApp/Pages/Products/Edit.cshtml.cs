@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FunctionalityMatrixApp.DataAccess.Interfaces;
 using FunctionalityMatrixApp.Model;
+using FunctionalityMatrixApp.Services.ServerFilesManager;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +21,20 @@ namespace FunctionalityMatrixApp.Pages.Products
         private readonly IConfiguration configuration;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IHtmlHelper htmlHelper;
+        private readonly IServerFilesManager serverFilesManager;
 
-        public EditModel(IProductsData productsData, IConfiguration configuration, IWebHostEnvironment webHostEnvironment, IHtmlHelper htmlHelper)
+        private string picturesPath;
+        private string attachmentsPath;
+
+        public EditModel(IProductsData productsData, 
+            IConfiguration configuration, 
+            IHtmlHelper htmlHelper, 
+            IServerFilesManager serverFilesManager)
         {
             this.productsData = productsData;
             this.configuration = configuration;
             this.htmlHelper = htmlHelper;
-            this.webHostEnvironment = webHostEnvironment;
+            this.serverFilesManager = serverFilesManager;
             this.htmlHelper = htmlHelper;
             ProductTypes = htmlHelper.GetEnumSelectList<ProductType>();
         }
@@ -81,8 +89,10 @@ namespace FunctionalityMatrixApp.Pages.Products
 
         public async Task<IActionResult> OnPostAsync()
         {
-            GetAvailableParentsAsSelectListItem();
+            picturesPath = serverFilesManager.GetEnvFullPath(configuration.GetValue<string>("UploadPaths:Pictures"));
+            attachmentsPath = serverFilesManager.GetEnvFullPath(configuration.GetValue<string>("UploadPaths:Attachments"));
 
+            GetAvailableParentsAsSelectListItem();
             if(SelectedParentId != -1)
             {
                 Product.ParentId = SelectedParentId;
@@ -90,17 +100,18 @@ namespace FunctionalityMatrixApp.Pages.Products
             {
                 Product.ParentId = null;
             }
-            
-            await PicturesUploadToServer();
-            await AttachmentsUploadToServer();
 
-            var deletedPictures = productsData.RemovePictures(PicturesIdsToDelete);
-            var deletedAttachments = productsData.RemoveAttachments(AttachmentsIdsToDelete);
+            var uploadedPicturesNames = await serverFilesManager.UploadFilesToServer(PicturesUpload, picturesPath);
+            var uploadedAttachmentsNames = await serverFilesManager.UploadFilesToServer(AttachmentsUpload, attachmentsPath);
+            AddPicturesToProduct(uploadedPicturesNames);
+            AddAttachmentsToProduct(uploadedAttachmentsNames);
 
-            PicturesDeleteFromServer(deletedPictures);
-            AttachmentsDeleteFromServer(deletedAttachments);
+            var deletedPictures = productsData.RemovePictures(PicturesIdsToDelete).Select(p => p.Name);
+            var deletedAttachments = productsData.RemoveAttachments(AttachmentsIdsToDelete).Select(p => p.Name);
+            serverFilesManager.DeleteFilesFromServer(deletedPictures, picturesPath);
+            serverFilesManager.DeleteFilesFromServer(deletedAttachments, attachmentsPath);
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 if (Product.Id > 0)
                 {
@@ -123,81 +134,22 @@ namespace FunctionalityMatrixApp.Pages.Products
             }
         }
 
-        private async Task PicturesUploadToServer()
+        private void AddAttachmentsToProduct(List<string> attachments)
         {
-            var pathString = configuration.GetValue<string>("UploadPaths:Pictures");
-            var pathLocations = pathString.Split("/");
-
-            foreach (var uploadFile in PicturesUpload)
+            foreach (var attachment in attachments)
             {
-                var uniqueName = GetUniqueFileName(uploadFile.FileName);
-                var path = Path.Combine(webHostEnvironment.WebRootPath, pathLocations[0], pathLocations[1], pathLocations[2], pathLocations[3], uniqueName);
-                using (var fileStream = new FileStream(path, FileMode.Create))
-                {
-                    await uploadFile.CopyToAsync(fileStream);
-                }
-
-                var picture = new Picture() { Name = uniqueName };
-                Product.Pictures.Add(picture);
+                var attachmentObject = new Attachment() { Name = attachment };
+                Product.Attachments.Add(attachmentObject);
             }
         }
 
-        private async Task AttachmentsUploadToServer()
+        private void AddPicturesToProduct(List<string> pictures)
         {
-            var pathString = configuration.GetValue<string>("UploadPaths:Attachments");
-            var pathLocations = pathString.Split("/");
-
-            foreach (var uploadFile in AttachmentsUpload)
+            foreach (var picture in pictures)
             {
-                var uniqueName = GetUniqueFileName(uploadFile.FileName);
-                var path = Path.Combine(webHostEnvironment.WebRootPath, pathLocations[0], pathLocations[1], pathLocations[2], pathLocations[3], uniqueName);
-                using (var fileStream = new FileStream(path, FileMode.Create))
-                {
-                    await uploadFile.CopyToAsync(fileStream);
-                }
-
-                var attachment = new Attachment() { Name = uniqueName };
-                Product.Attachments.Add(attachment);
+                var pictureObject = new Picture() { Name = picture };
+                Product.Pictures.Add(pictureObject);
             }
-        }
-
-        private void AttachmentsDeleteFromServer(IEnumerable<Attachment> attachmentsToDelete)
-        {
-            var pathString = configuration.GetValue<string>("UploadPaths:Attachments");
-            var pathLocations = pathString.Split("/");
-
-            foreach (var attachment in attachmentsToDelete)
-            {
-                var path = Path.Combine(webHostEnvironment.WebRootPath, pathLocations[0], pathLocations[1], pathLocations[2], pathLocations[3], attachment.Name);
-                if(System.IO.File.Exists(path))
-                {
-                    System.IO.File.Delete(path);
-                }
-            }
-        }
-
-        private void PicturesDeleteFromServer(IEnumerable<Picture> picturesToDelete)
-        {
-            var pathString = configuration.GetValue<string>("UploadPaths:Pictures");
-            var pathLocations = pathString.Split("/");
-
-            foreach (var picture in picturesToDelete)
-            {
-                var path = Path.Combine(webHostEnvironment.WebRootPath, pathLocations[0], pathLocations[1], pathLocations[2], pathLocations[3], picture.Name);
-                if (System.IO.File.Exists(path))
-                {
-                    System.IO.File.Delete(path);
-                }
-            }
-        }
-
-        private string GetUniqueFileName(string fileName)
-        {
-            var extension = Path.GetExtension(fileName);
-            fileName = Path.GetFileNameWithoutExtension(fileName);
-            var guid = Guid.NewGuid().ToString().Substring(0, 10);
-
-            return $"{fileName}_{guid}{extension}";
         }
 
         private void GetAvailableParentsAsSelectListItem()
