@@ -13,7 +13,12 @@
 <div class="card">
     @if (Model.Pictures.Count() > 0)
     {
-        <partial name="_PicturesCarousel" model="Model" />
+        <div class="slick-carousel">
+            @foreach (var picture in Model.Pictures)
+            {
+                <img src="@picture" alt="Product picture"/>
+            }
+        </div>
     }
     <div class="card-body">
         <h3 class="card-title">@Model.Product.Name</h3>
@@ -136,3 +141,17 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.slick-carousel').slick({
+                dots: true,
+            })
+        });
+    </script>
+}

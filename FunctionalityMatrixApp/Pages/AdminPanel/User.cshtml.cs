@@ -28,6 +28,9 @@ namespace FunctionalityMatrixApp.Pages.AdminPanel
 
         public List<IdentityRole> AvailableRoles { get; set; }
 
+        [BindProperty]
+        public bool IsEmailConfirmed { get; set; }
+
         public async Task<IActionResult> OnGetAsync(string userId)
         {
             SelectedUser = await userManager.FindByIdAsync(userId);
@@ -35,6 +38,8 @@ namespace FunctionalityMatrixApp.Pages.AdminPanel
             {
                 return Redirect("NotFound");
             }
+
+            IsEmailConfirmed = await userManager.IsEmailConfirmedAsync(SelectedUser);
 
             AvailableRoles = roleManager.Roles.ToList();
             CurrentRoles = await userManager.GetRolesAsync(SelectedUser) as List<string>;
