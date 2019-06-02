@@ -1,17 +1,15 @@
 ﻿@page "{userId}"
-@model FunctionalityMatrixApp.Pages.AdminPanel.UserDeleteModel
+@model FunctionalityMatrixApp.Pages.AdminPanel.UserVerifyModel
 @{
-    ViewData["Title"] = "UserDelete";
+    ViewData["Title"] = "UserVerify";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h2>Delete user</h2>
+<h2>Verify user email</h2>
 <div>
-    Do you really want to delete @Model.UserToDelete.UserName account?
+    Do you really want to verify @Model.UserToVerify.UserName account?
     <form method="post" class="btn">
         <button class="btn btn-danger">Yes</button>
     </form>
     <a class="btn btn-success" asp-page="./UsersList">No</a>
 </div>
-
-
