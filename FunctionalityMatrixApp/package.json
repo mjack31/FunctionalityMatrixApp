@@ -1,0 +1,16 @@
+{
+  "name": "functionalitymatrixapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "slick-carousel": "^1.8.1",
+    "bs-custom-file-input": "^1.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mjack31",
+  "license": "ISC"
+}
